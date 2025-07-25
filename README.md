@@ -102,7 +102,7 @@ Through this project, I learned:
 **Yashasvi Kumar Tiwari**  
 🇮🇳 Undergraduate CSE Student  
 🌌 Aspiring Particle Physicist & ML Enthusiast  
-🔗 [LinkedIn](https://www.linkedin.com/in/yashasvikumartiwari)
+🔗 [LinkedIn](https://www.linkedin.com/in/yashasvi-kumar-tiwari/)
 
 ---
 
