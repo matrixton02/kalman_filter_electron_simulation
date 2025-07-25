@@ -13,13 +13,13 @@ int main(){
     const int steps=1000;
 
     EMSimulator sim(dt);
-    sim.setFeild(Eigen::Vector3d(0,0,0),Eigen::Vector3d(0,0,0.01));  //B=1e-4T along z
+    sim.setFeild(Eigen::Vector3d(0,0,0),Eigen::Vector3d(0,0,0.01));  //B=0.0 T along z
 
     ParticleState state;
     state.position = Eigen::Vector3d(0, 0, 0);
-    state.velocity = Eigen::Vector3d(1e5, 0, 1e5);
+    state.velocity = Eigen::Vector3d(1e5, 0, 1e5);  //defining particle inital position and velocity
 
-    KalmanFilter kf(dt);
+    KalmanFilter kf(dt); //creating the kalman filter object
     Eigen::VectorXd x0(5); //[x,y,v,theta,omega]
     double omega = std::abs(q * 0.01 / m); // B = 1e-4 T
     x0<<0,1e5/omega,1e6,-M_PI/2,omega; //circular motion from qvB/m
@@ -36,23 +36,23 @@ int main(){
     for(i=0;i<steps;i++){
         double t=i*dt;
 
-        sim.step(state);
+        sim.step(state);  //calcualting next position and velocity using lorentz force
 
         double noisy_x=state.position(0)+noise(gen);
-        double noisy_y=state.position(1)+noise(gen);
+        double noisy_y=state.position(1)+noise(gen);  //add noise to it to mimic sensor noise
 
         Eigen::Vector2d meas(noisy_x,noisy_y);
         kf.predict();
-        kf.update(meas);
+        kf.update(meas);          //predicting and updating kalman filter based in noisy measurement 
         Eigen::VectorXd kf_state = kf.state();
         file << t << ","
              << state.position(0) << "," << state.position(1) << ","
              << noisy_x << "," << noisy_y << ","
-             << kf_state(0) << "," << kf_state(1) << "\n";
+             << kf_state(0) << "," << kf_state(1) << "\n";    //storing data in the file
     }
 
     file.close();
-    cout<<"Simulation complete! Data saved to output/data.csv\n";
+    cout<<"Simulation complete! Data saved to data.csv\n";
 
     return 0;
 }

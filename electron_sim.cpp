@@ -11,9 +11,9 @@ void EMSimulator::setFeild(const Eigen::Vector3d& E,const Eigen::Vector3d& B){
 }
 
 void EMSimulator::step(ParticleState& state){
-    Eigen::Vector3d force = q * (E_feild + state.velocity.cross(B_feild));
-    Eigen::Vector3d acceleration = force / m;
+    Eigen::Vector3d force = q * (E_feild + state.velocity.cross(B_feild));  //Lorentz force calculation
+    Eigen::Vector3d acceleration = force / m; //acceleration computation
 
-    state.position += state.velocity * dt + 0.5 * acceleration * dt * dt;
+    state.position += state.velocity * dt + 0.5 * acceleration * dt * dt;  //using verlet integration method to update sate position and velocity
     state.velocity += acceleration * dt;
 }

@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
 class KalmanFilter{
-private:
+private:  //decelaration of vector x P Q R H for our Kalman filter
     double dt;
     Eigen::VectorXd x;
     Eigen::MatrixXd P;
@@ -9,7 +9,7 @@ private:
     Eigen::MatrixXd R;
     Eigen::MatrixXd H;
 
-public:
+public:  //function declaration for kalman filter
     KalmanFilter(double dt);
     void init(const Eigen::VectorXd& x0);
     void predict();

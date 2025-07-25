@@ -4,17 +4,11 @@
 using namespace std;
 
 KalmanFilter::KalmanFilter(double dt):dt(dt),x(5),P(5,5),Q(5,5),R(2,2),H(2,5){
-    Q=Eigen::MatrixXd::Identity(5,5);
+    Q=Eigen::MatrixXd::Identity(5,5);  //initilaizing Q matrix
     Q*=1e-16;
-    // Q(0,0) = 1e-6;  // x
-    // Q(1,1) = 1e-6;  // y
-    // Q(2,2) = 1e-1;    // velocity
-    // Q(3,3) = 1e-4;   // angle
-    // Q(4,4) = 1e2;    // omega
+    R = Eigen::Matrix2d::Identity() * 1e-18;   //initializing R matrix
 
-    R = Eigen::Matrix2d::Identity() * 1e-18; 
-
-    H.setZero();
+    H.setZero();        //initilizing H matrix
     H(0,0)=1;
     H(1,1)=1;
 }
@@ -24,6 +18,7 @@ void KalmanFilter::init(const Eigen::VectorXd& x0){
 }
 
 void KalmanFilter::predict(){
+    //extracting variable from our state vector
     double x_=x(0);
     double y=x(1);
     double v=x(2);
@@ -32,6 +27,7 @@ void KalmanFilter::predict(){
 
     Eigen::VectorXd x_pred(5);
 
+    //predicting position velocity and other parameter using out kalman vectors
     if(abs(omega)>1e-5){
         x_pred(0)=x_+(v/omega)*(sin(theta+omega*dt)-sin(theta));
         x_pred(1)=y+(v/omega)*(-cos(theta+omega*dt)+cos(theta));
@@ -49,6 +45,7 @@ void KalmanFilter::predict(){
 
     x=x_pred;
 
+    //updating our F and P matrix based on the noisy measurement and previous predictions
     Eigen::MatrixXd F=Eigen::MatrixXd::Identity(5,5);
 
     if(abs(omega)>1e-5){
@@ -71,6 +68,7 @@ void KalmanFilter::predict(){
 }
 
 void KalmanFilter::update(const Eigen::VectorXd& z) {
+    //updating remaining parameters of kalman filter
     Eigen::VectorXd y=z-H*x;
     Eigen::MatrixXd S=H*P*H.transpose()+R;
     Eigen::MatrixXd K=P*H.transpose()*S.inverse();
